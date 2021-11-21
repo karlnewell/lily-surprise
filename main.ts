@@ -29,7 +29,7 @@ sprites.onOverlap(SpriteKind.dog, SpriteKind.enemyblackghost, function (sprite, 
 })
 scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile1`, function (sprite, location) {
     if (hasKey == true) {
-    	
+        tiles.setTilemap(tilemap`level15`)
     } else {
         game.splash("You don't have the key yet. ")
     }
