@@ -4,13 +4,36 @@ namespace SpriteKind {
     export const girl = SpriteKind.create()
     export const zombieevil = SpriteKind.create()
     export const coin = SpriteKind.create()
+    export const enemyblackghost = SpriteKind.create()
 }
-let list: tiles.Location[] = []
 function start_level () {
     if (current_level == 0) {
         tiles.setTilemap(tilemap`level1`)
     } else if (current_level == 1) {
         tiles.setTilemap(tilemap`level2`)
+        for (let value of tiles.getTilesByType(assets.tile`myTile14`)) {
+            blackghost = sprites.create(img`
+                . . c c c c c c c c c c c c . . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c 2 2 c c c c 2 2 c c c . 
+                . c c c 2 2 c c c c 2 2 c c c . 
+                . c c c 2 2 c c c c 2 2 c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c c c c c c c c c c c c c . 
+                . c c . . c c c . . c . . c c . 
+                `, SpriteKind.enemyblackghost)
+            tiles.placeOnTile(blackghost, value)
+            tiles.setTileAt(value, assets.tile`transparency16`)
+        }
+        blackghost.vx = -40
     } else if (current_level == 2) {
         tiles.setTilemap(tilemap`level4`)
     } else if (current_level == 3) {
@@ -43,7 +66,7 @@ function start_level () {
             . . . 1 1 1 1 . 1 1 1 . 1 1 . . 
             . . . 1 1 1 . . . . . . 1 1 . . 
             `, SpriteKind.enemyghost)
-        ghoasty.follow(Dog, 50)
+        ghoasty.follow(Dog, 60)
         tiles.placeOnTile(ghoasty, value)
         tiles.setTileAt(value, assets.tile`transparency16`)
     }
@@ -193,6 +216,19 @@ function start_level () {
         tiles.setTileAt(value, assets.tile`transparency16`)
     }
 }
+scene.onOverlapTile(SpriteKind.dog, sprites.dungeon.stairNorth, function (sprite, location) {
+    current_level = 0
+    start_level()
+    for (let value of sprites.allOfKind(SpriteKind.Food)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+})
+sprites.onOverlap(SpriteKind.dog, SpriteKind.enemyblackghost, function (sprite, otherSprite) {
+    game.over(false)
+})
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     Dog,
@@ -248,6 +284,13 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 sprites.onOverlap(SpriteKind.dog, SpriteKind.enemyghost, function (sprite, otherSprite) {
     game.over(false)
+})
+info.onCountdownEnd(function () {
+    for (let value of sprites.allOfKind(SpriteKind.Food)) {
+        value.destroy()
+    }
+    current_level = 2
+    start_level()
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
@@ -309,16 +352,20 @@ scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile2`, function (sprite, loca
     current_level += 1
     start_level()
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Player, function (sprite, otherSprite) {
-	
+sprites.onOverlap(SpriteKind.dog, SpriteKind.Food, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    info.changeScoreBy(1)
 })
 scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile11`, function (sprite, location) {
     current_level += -1
     start_level()
+    for (let value of sprites.allOfKind(SpriteKind.girl)) {
+        value.destroy()
+    }
 })
 scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile12`, function (sprite, location) {
     tiles.setTilemap(tilemap`level6`)
-    for (let value of list) {
+    for (let value of tiles.getTilesByType(assets.tile`myTile6`)) {
         ghost = sprites.create(img`
             . . . . 1 1 1 1 1 . . . . . . . 
             . . . 1 1 1 1 1 1 1 1 . . . . . 
@@ -397,14 +444,12 @@ scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile12`, function (sprite, loc
         tiles.placeOnTile(ghost, value)
         tiles.setTileAt(value, assets.tile`transparency16`)
     }
-})
-sprites.onOverlap(SpriteKind.dog, SpriteKind.girl, function (sprite, otherSprite) {
-    game.splash("Find my brother. He will give you a key to unlock a gate so you can escape. To find him, take the left path. Good luck.")
-})
-scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile0`, function (sprite, location) {
-    tiles.setTilemap(tilemap`level7`)
+    for (let value of tiles.getTilesByType(assets.tile`myTile4`)) {
+        tiles.placeOnTile(Dog, value)
+        tiles.setTileAt(value, assets.tile`transparency16`)
+    }
     for (let value of tiles.getTilesByType(assets.tile`myTile13`)) {
-        mySprite = sprites.create(img`
+        bone = sprites.create(img`
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -421,13 +466,59 @@ scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile0`, function (sprite, loca
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
-            `, SpriteKind.Player)
+            `, SpriteKind.Food)
+        tiles.placeOnTile(bone, value)
+        tiles.setTileAt(value, assets.tile`transparency16`)
     }
 })
-let mySprite: Sprite = null
+sprites.onOverlap(SpriteKind.dog, SpriteKind.girl, function (sprite, otherSprite) {
+    girly.setFlag(SpriteFlag.Ghost, true)
+    game.splash("Find my brother. He will give you a key to unlock a gate so you can escape. To find him, take the left path. Good luck.")
+    pause(2000)
+    girly.setFlag(SpriteFlag.Ghost, false)
+})
+scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile0`, function (sprite, location) {
+    tiles.setTilemap(tilemap`level7`)
+    game.splash("collect as many bones as you can in 10 seconds!")
+    for (let value of tiles.getTilesByType(assets.tile`myTile13`)) {
+        bone = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . f f . . . . . . . . . . f f . 
+            f 1 1 f . . . . . . . . f 1 1 f 
+            f 1 1 1 f f f f f f f f 1 1 1 f 
+            . f 1 1 1 1 1 1 1 1 1 1 1 1 f . 
+            f 1 1 1 f f f f f f f f 1 1 1 f 
+            f 1 1 f . . . . . . . . f 1 1 f 
+            . f f . . . . . . . . . . f f . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Food)
+        tiles.placeOnTile(bone, value)
+        tiles.setTileAt(value, assets.tile`transparency16`)
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.enemyghost)) {
+        value.destroy()
+    }
+    for (let value of tiles.getTilesByType(assets.tile`myTile4`)) {
+        tiles.placeOnTile(Dog, value)
+        tiles.setTileAt(value, assets.tile`transparency16`)
+    }
+    info.startCountdown(10)
+})
+let bone: Sprite = null
 let ghost: Sprite = null
 let girly: Sprite = null
 let ghoasty: Sprite = null
+let blackghost: Sprite = null
 let current_level = 0
 let Dog: Sprite = null
 Dog = sprites.create(img`
@@ -448,6 +539,15 @@ Dog = sprites.create(img`
     `, SpriteKind.dog)
 controller.moveSprite(Dog)
 scene.cameraFollowSprite(Dog)
-current_level = 2
+current_level = 1
 start_level()
 game.splash("Get the dog to the end without dying! Good luck!")
+game.onUpdate(function () {
+    if (blackghost.isHittingTile(CollisionDirection.Left)) {
+        blackghost.vx = 40
+    } else if (blackghost.isHittingTile(CollisionDirection.Right)) {
+        blackghost.vx = -40
+    } else {
+    	
+    }
+})
