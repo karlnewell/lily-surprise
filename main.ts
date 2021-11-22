@@ -703,7 +703,7 @@ Dog = sprites.create(img`
     `, SpriteKind.dog)
 controller.moveSprite(Dog)
 scene.cameraFollowSprite(Dog)
-current_level = 0
+current_level = 3
 start_level()
 game.splash("Get the dog to the end without dying! Good luck!")
 game.onUpdate(function () {
