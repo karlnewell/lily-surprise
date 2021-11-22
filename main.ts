@@ -6,6 +6,7 @@ namespace SpriteKind {
     export const coin = SpriteKind.create()
     export const enemyblackghost = SpriteKind.create()
     export const boy = SpriteKind.create()
+    export const citty = SpriteKind.create()
 }
 sprites.onOverlap(SpriteKind.dog, SpriteKind.boy, function (sprite, otherSprite) {
     boi.setFlag(SpriteFlag.Ghost, true)
@@ -30,6 +31,31 @@ sprites.onOverlap(SpriteKind.dog, SpriteKind.enemyblackghost, function (sprite, 
 scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile1`, function (sprite, location) {
     if (hasKey == true) {
         tiles.setTilemap(tilemap`level15`)
+        for (let value18 of tiles.getTilesByType(assets.tile`myTile4`)) {
+            tiles.placeOnTile(Dog, value18)
+            tiles.setTileAt(value18, sprites.castle.tileGrass1)
+        }
+        for (let value12 of tiles.getTilesByType(assets.tile`myTile10`)) {
+            kittyVar = sprites.create(img`
+                e e e . . . . e e e . . . . 
+                c d d c . . c d d c . . . . 
+                c b d d f f d d b c . . . . 
+                c 3 b d d b d b 3 c . . . . 
+                f b 3 d d d d 3 b f . . . . 
+                e d d d d d d d d e . . . . 
+                e d 2 5 d d 2 2 d e . b f b 
+                f d 2 2 d d 5 2 d f . f d f 
+                f b d d b b d d c f . f d f 
+                . f c c c c c c b b f f d f 
+                . f b d d d d d d b b d b f 
+                . f d d d d d b d d f f f . 
+                . f d f f f d f f d f . . . 
+                . f f . . f f . . f f . . . 
+                `, SpriteKind.citty)
+            tiles.placeOnTile(kittyVar, value12)
+            tiles.setTileAt(value12, sprites.castle.tileGrass1)
+            kittyVar.vy = 40
+        }
     } else {
         game.splash("You don't have the key yet. ")
     }
@@ -97,6 +123,9 @@ info.onCountdownEnd(function () {
     current_level = 2
     start_level()
 })
+sprites.onOverlap(SpriteKind.dog, SpriteKind.Projectile, function (sprite, otherSprite) {
+    game.over(false)
+})
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.runImageAnimation(
     Dog,
@@ -156,6 +185,9 @@ sprites.onOverlap(SpriteKind.dog, SpriteKind.Enemy, function (sprite, otherSprit
 scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile2`, function (sprite, location) {
     current_level += 1
     start_level()
+})
+scene.onHitWall(SpriteKind.citty, function (sprite, location) {
+    sprite.vy = sprite.vy * -1
 })
 scene.onHitWall(SpriteKind.enemyblackghost, function (sprite, location) {
     blackghost.vx = blackghost.vx * -1
@@ -631,11 +663,13 @@ scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile0`, function (sprite, loca
     }
     info.startCountdown(10)
 })
+let kittyProjectile: Sprite = null
 let bone: Sprite = null
 let ghost: Sprite = null
 let girly: Sprite = null
 let ghoasty: Sprite = null
 let blackghost: Sprite = null
+let kittyVar: Sprite = null
 let hasKey = false
 let boi: Sprite = null
 let current_level = 0
@@ -661,3 +695,32 @@ scene.cameraFollowSprite(Dog)
 current_level = 3
 start_level()
 game.splash("Get the dog to the end without dying! Good luck!")
+game.onUpdate(function () {
+    if (kittyVar) {
+        if (Dog.overlapsWith(kittyVar)) {
+            game.over(true)
+        }
+    }
+})
+game.onUpdateInterval(750, function () {
+    if (kittyVar) {
+        kittyProjectile = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . 4 4 4 4 4 . . . . . . 
+            . . . 4 4 4 5 5 5 d 4 4 4 4 . . 
+            . . 4 d 5 d 5 5 5 d d d 4 4 . . 
+            . . 4 5 5 1 1 1 d d 5 5 5 4 . . 
+            . 4 5 5 5 1 1 1 5 1 1 5 5 4 4 . 
+            . 4 d d 1 1 5 5 5 1 1 5 5 d 4 . 
+            . 4 5 5 1 1 5 1 1 5 5 d d d 4 . 
+            . 2 5 5 5 d 1 1 1 5 1 1 5 5 2 . 
+            . 2 d 5 5 d 1 1 1 5 1 1 5 5 2 . 
+            . . 2 4 d d 5 5 5 5 d d 5 4 . . 
+            . . . 2 2 4 d 5 5 d d 4 4 . . . 
+            . . 2 2 2 2 2 4 4 4 2 2 2 . . . 
+            . . . 2 2 4 4 4 4 4 4 2 2 . . . 
+            . . . . . 2 2 2 2 2 2 . . . . . 
+            `, kittyVar, -50, 0)
+    }
+})
