@@ -7,6 +7,8 @@ namespace SpriteKind {
     export const enemyblackghost = SpriteKind.create()
     export const boy = SpriteKind.create()
     export const citty = SpriteKind.create()
+    export const kittyProjectileKind = SpriteKind.create()
+    export const dogProjectileKind = SpriteKind.create()
 }
 sprites.onOverlap(SpriteKind.dog, SpriteKind.boy, function (sprite, otherSprite) {
     boi.setFlag(SpriteFlag.Ghost, true)
@@ -57,6 +59,7 @@ scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile1`, function (sprite, loca
             kittyVar.vy = 40
         }
     } else {
+        Dog.setFlag(SpriteFlag.GhostThroughTiles, true)
         game.splash("You don't have the key yet. ")
     }
 })
@@ -115,6 +118,9 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 sprites.onOverlap(SpriteKind.dog, SpriteKind.enemyghost, function (sprite, otherSprite) {
     game.over(false)
+})
+sprites.onOverlap(SpriteKind.citty, SpriteKind.dogProjectileKind, function (sprite, otherSprite) {
+    game.over(true)
 })
 info.onCountdownEnd(function () {
     for (let value10 of sprites.allOfKind(SpriteKind.Food)) {
@@ -501,6 +507,9 @@ function start_level () {
         tiles.setTileAt(value7, assets.tile`transparency16`)
     }
 }
+sprites.onOverlap(SpriteKind.dog, SpriteKind.kittyProjectileKind, function (sprite, otherSprite) {
+    game.over(false)
+})
 sprites.onOverlap(SpriteKind.dog, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy()
     info.changeScoreBy(1)
@@ -664,6 +673,8 @@ scene.onOverlapTile(SpriteKind.dog, assets.tile`myTile0`, function (sprite, loca
     info.startCountdown(10)
 })
 let kittyProjectile: Sprite = null
+let dogProjectile: Sprite = null
+let dogProjectileDelay = false
 let bone: Sprite = null
 let ghost: Sprite = null
 let girly: Sprite = null
@@ -692,13 +703,32 @@ Dog = sprites.create(img`
     `, SpriteKind.dog)
 controller.moveSprite(Dog)
 scene.cameraFollowSprite(Dog)
-current_level = 3
+current_level = 0
 start_level()
 game.splash("Get the dog to the end without dying! Good luck!")
 game.onUpdate(function () {
     if (kittyVar) {
-        if (Dog.overlapsWith(kittyVar)) {
-            game.over(true)
+        if (controller.A.isPressed() && dogProjectileDelay == false) {
+            dogProjectile = sprites.createProjectileFromSprite(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . f f f . f f f . . . . 
+                . . . . f 3 3 3 f 3 3 3 f . . . 
+                . . . . f 3 3 3 3 3 1 3 f . . . 
+                . . . . f 3 3 3 3 3 3 3 f . . . 
+                . . . . . f 3 b b b 3 f . . . . 
+                . . . . . f f b b b f f . . . . 
+                . . . . . . f f b f f . . . . . 
+                . . . . . . . f f f . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, Dog, 50, 0)
+            dogProjectile.setKind(SpriteKind.dogProjectileKind)
+            dogProjectileDelay = true
         }
     }
 })
@@ -707,20 +737,27 @@ game.onUpdateInterval(750, function () {
         kittyProjectile = sprites.createProjectileFromSprite(img`
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
-            . . . . . 4 4 4 4 4 . . . . . . 
-            . . . 4 4 4 5 5 5 d 4 4 4 4 . . 
-            . . 4 d 5 d 5 5 5 d d d 4 4 . . 
-            . . 4 5 5 1 1 1 d d 5 5 5 4 . . 
-            . 4 5 5 5 1 1 1 5 1 1 5 5 4 4 . 
-            . 4 d d 1 1 5 5 5 1 1 5 5 d 4 . 
-            . 4 5 5 1 1 5 1 1 5 5 d d d 4 . 
-            . 2 5 5 5 d 1 1 1 5 1 1 5 5 2 . 
-            . 2 d 5 5 d 1 1 1 5 1 1 5 5 2 . 
-            . . 2 4 d d 5 5 5 5 d d 5 4 . . 
-            . . . 2 2 4 d 5 5 d d 4 4 . . . 
-            . . 2 2 2 2 2 4 4 4 2 2 2 . . . 
-            . . . 2 2 4 4 4 4 4 4 2 2 . . . 
-            . . . . . 2 2 2 2 2 2 . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . e e e . . . . . . 
+            . . . . . . d b d d . . . . . . 
+            . . . . . e b d f e d e . . . . 
+            . . . . e b b b f f d e e . . . 
+            . . . . b b f d b b d d e . . . 
+            . . . . e b f f b d f e d . . . 
+            . . . . . e d d e b b d . . . . 
+            . . . . . . e e e e . . . . . . 
+            . . . . . . . e . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
             `, kittyVar, -50, 0)
+        kittyProjectile.setKind(SpriteKind.kittyProjectileKind)
     }
+})
+game.onUpdateInterval(2000, function () {
+    Dog.setFlag(SpriteFlag.GhostThroughTiles, false)
+})
+game.onUpdateInterval(500, function () {
+    dogProjectileDelay = false
 })
