@@ -1,0 +1,26 @@
+{
+    "image1": {
+        "data": "hwQQAAoAAAAAAAAAAAAAAAAwAwAAAAAAAAMwAAAAAAAwADAAAAAAAAAAMAAAAAAAAAD/DwAAAAAA8Lv7MwAAAAC/u/swAAAAAL+7+wAAAAAA8Lv7AAAAAADwu/sAAAAAAAC//zMAAAAA8LsPMAAAAADwsw8AAAAAAAC/DwAAAAAAAOAAAAAAAA==",
+        "mimeType": "image/x-mkcd-f4",
+        "displayName": "rat"
+    },
+    "anim2": {
+        "namespace": "myAnimations",
+        "id": "anim2",
+        "mimeType": "application/mkcd-animation",
+        "data": "YzgwMDEwMDAwYTAwMDIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMzAwMDAwMDAwZjAwZjAwMzAwMDAwZmZmMGJmZmIwMDAwMDNmMGIzYmZiYmJiMGYwMDAzYmViYmJiYmJiYjNmMzMwMGYwZmZiZmJiYmIwZjAwMDAwMDAwZmZmZmZmMDAwMDAwMDAwMDAzMDAzMDAwMDAwMDAwMzAwMzAwMzMwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGYwMGYzMDAzMDAwMGZmZjBiZmZiMDAzMDAwZjBiM2JmYmJiYjBmMDAwM2JlYmJiYmJiYmIzZjMzMDBmMGZmYmZiYmJiMGYwMDAwMDAwMGZmZmZmZjAwMDAwMDAwMzAwMzAwMzMwMDAwMDAwMDAwMDAwMDAwMDAwMDAw",
+        "displayName": "rat left"
+    },
+    "anim1": {
+        "namespace": "myAnimations",
+        "id": "anim1",
+        "mimeType": "application/mkcd-animation",
+        "data": "YzgwMDEwMDAwYTAwMDIwMDAwMDAwMDAwMDAwMDAwMDAwMDMwMDAwMDAwMDAwMDAwMDAwMzAwZjAwZjAwMDAwMDMwMDAwMGJmZmIwZmZmMDAzMDAwZjBiYmJiZmIzYjBmMDAzM2YzYmJiYmJiYmJlYjAwMDBmMGJiYmJmYmZmMGYwMDAwMDBmZmZmZmYwMDAwMDAwMDAwMDMwMDMwMDAwMDAwMDAwMDMzMDAzMDAzMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMzAwM2YwMGYwMDAwMDAwMDAzMDBiZmZiMGZmZjAwMzAwMGYwYmJiYmZiM2IwZjAwMzNmM2JiYmJiYmJiZWIwMDAwZjBiYmJiZmJmZjBmMDAwMDAwZmZmZmZmMDAwMDAwMDAwMDMzMDAzMDAzMDAwMDAwMDAwMDAwMDAwMDAw",
+        "displayName": "rat right"
+    },
+    "*": {
+        "mimeType": "image/x-mkcd-f4",
+        "dataEncoding": "base64",
+        "namespace": "myImages"
+    }
+}

@@ -8,17 +8,12 @@ class SpriteKind:
     enemyblackghost = SpriteKind.create()
     boy = SpriteKind.create()
     citty = SpriteKind.create()
+    kittyProjectileKind = SpriteKind.create()
+    dogProjectileKind = SpriteKind.create()
+    bikini_bottom = SpriteKind.create()
+    bikini_top = SpriteKind.create()
 
-def on_on_overlap(sprite, otherSprite):
-    global hasKey
-    boi.set_flag(SpriteFlag.GHOST, True)
-    game.splash("Here is the key. Go unlock the gate. But be careful. There is a rabid beast outside of the gate. He will want to fight")
-    pause(2000)
-    boi.set_flag(SpriteFlag.GHOST, False)
-    hasKey = True
-sprites.on_overlap(SpriteKind.dog, SpriteKind.boy, on_on_overlap)
-
-def on_overlap_tile(sprite2, location):
+def on_overlap_tile(sprite, location):
     global current_level
     current_level = 0
     start_level()
@@ -28,73 +23,11 @@ def on_overlap_tile(sprite2, location):
         value9.destroy()
 scene.on_overlap_tile(SpriteKind.dog, sprites.dungeon.stair_north, on_overlap_tile)
 
-def on_on_overlap2(sprite3, otherSprite2):
-    game.over(False)
-sprites.on_overlap(SpriteKind.dog, SpriteKind.enemyblackghost, on_on_overlap2)
-
-def on_overlap_tile2(sprite4, location2):
-    global value102, projectile
-    if hasKey == True:
-        tiles.set_tilemap(tilemap("""
-            level15
-        """))
-        for value18 in tiles.get_tiles_by_type(assets.tile("""
-            myTile4
-        """)):
-            tiles.place_on_tile(Dog, value18)
-            tiles.set_tile_at(value18, sprites.castle.tile_grass1)
-        for value12 in tiles.get_tiles_by_type(assets.tile("""
-            myTile10
-        """)):
-            value102 = sprites.create(img("""
-                    e e e . . . . e e e . . . . 
-                                    c d d c . . c d d c . . . . 
-                                    c b d d f f d d b c . . . . 
-                                    c 3 b d d b d b 3 c . . . . 
-                                    f b 3 d d d d 3 b f . . . . 
-                                    e d d d d d d d d e . . . . 
-                                    e d 2 5 d d 2 2 d e . b f b 
-                                    f d 2 2 d d 5 2 d f . f d f 
-                                    f b d d b b d d c f . f d f 
-                                    . f c c c c c c b b f f d f 
-                                    . f b d d d d d d b b d b f 
-                                    . f d d d d d b d d f f f . 
-                                    . f d f f f d f f d f . . . 
-                                    . f f . . f f . . f f . . .
-                """),
-                SpriteKind.citty)
-            tiles.place_on_tile(value102, value12)
-            tiles.set_tile_at(value12, sprites.castle.tile_grass1)
-            value102.vy = 40
-        while True:
-            projectile = sprites.create_projectile_from_sprite(img("""
-                    . . . . . . . . . . . . . . . . 
-                                    . . . . . . . . . . . . . . . . 
-                                    . . . . . 4 4 4 4 4 . . . . . . 
-                                    . . . 4 4 4 5 5 5 d 4 4 4 4 . . 
-                                    . . 4 d 5 d 5 5 5 d d d 4 4 . . 
-                                    . . 4 5 5 1 1 1 d d 5 5 5 4 . . 
-                                    . 4 5 5 5 1 1 1 5 1 1 5 5 4 4 . 
-                                    . 4 d d 1 1 5 5 5 1 1 5 5 d 4 . 
-                                    . 4 5 5 1 1 5 1 1 5 5 d d d 4 . 
-                                    . 2 5 5 5 d 1 1 1 5 1 1 5 5 2 . 
-                                    . 2 d 5 5 d 1 1 1 5 1 1 5 5 2 . 
-                                    . . 2 4 d d 5 5 5 5 d d 5 4 . . 
-                                    . . . 2 2 4 d 5 5 d d 4 4 . . . 
-                                    . . 2 2 2 2 2 4 4 4 2 2 2 . . . 
-                                    . . . 2 2 4 4 4 4 4 4 2 2 . . . 
-                                    . . . . . 2 2 2 2 2 2 . . . . .
-                """),
-                value102,
-                -50,
-                0)
-    else:
-        game.splash("You don't have the key yet. ")
-scene.on_overlap_tile(SpriteKind.dog,
-    assets.tile("""
-        myTile1
-    """),
-    on_overlap_tile2)
+def on_on_overlap(sprite2, otherSprite):
+    global has_bottom
+    otherSprite.destroy(effects.confetti, 500)
+    has_bottom = True
+sprites.on_overlap(SpriteKind.dog, SpriteKind.bikini_bottom, on_on_overlap)
 
 def on_left_pressed():
     animation.run_image_animation(Dog,
@@ -150,17 +83,15 @@ def on_left_pressed():
         True)
 controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 
-def on_on_overlap3(sprite5, otherSprite3):
+def on_on_overlap2(sprite3, otherSprite2):
+    global has_top
+    otherSprite2.destroy(effects.confetti, 500)
+    has_top = True
+sprites.on_overlap(SpriteKind.dog, SpriteKind.bikini_top, on_on_overlap2)
+
+def on_on_overlap3(sprite4, otherSprite3):
     game.over(False)
 sprites.on_overlap(SpriteKind.dog, SpriteKind.enemyghost, on_on_overlap3)
-
-def on_countdown_end():
-    global current_level
-    for value10 in sprites.all_of_kind(SpriteKind.food):
-        value10.destroy()
-    current_level = 2
-    start_level()
-info.on_countdown_end(on_countdown_end)
 
 def on_right_pressed():
     animation.run_image_animation(Dog,
@@ -216,39 +147,66 @@ def on_right_pressed():
         True)
 controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
 
-def on_on_overlap4(sprite6, otherSprite4):
+def on_on_overlap4(sprite5, otherSprite4):
     game.over(False)
 sprites.on_overlap(SpriteKind.dog, SpriteKind.enemy, on_on_overlap4)
 
-def on_overlap_tile3(sprite7, location3):
-    global current_level
-    current_level += 1
-    start_level()
+def on_overlap_tile2(sprite6, location2):
+    if has_bottom == True:
+        pass
+    else:
+        Dog.set_flag(SpriteFlag.GHOST_THROUGH_TILES, True)
+        game.splash("Collect all the items.")
 scene.on_overlap_tile(SpriteKind.dog,
     assets.tile("""
-        myTile2
+        myTile5
     """),
-    on_overlap_tile3)
+    on_overlap_tile2)
 
-def on_hit_wall(sprite8, location4):
-    sprite8.vy = sprite8.vy * -1
+def on_hit_wall(sprite7, location3):
+    sprite7.vy = sprite7.vy * -1
 scene.on_hit_wall(SpriteKind.citty, on_hit_wall)
 
-def on_hit_wall2(sprite9, location5):
+def on_hit_wall2(sprite8, location4):
     blackghost.vx = blackghost.vx * -1
 scene.on_hit_wall(SpriteKind.enemyblackghost, on_hit_wall2)
 
 def start_level():
-    global blackghost, ghoasty, girly, boi, ghost
+    global bottom, blackghost, ghoasty, girly, boi, ghost
     if current_level == 0:
         tiles.set_tilemap(tilemap("""
-            level1
+            level
         """))
+        game.splash("Collect items for your nest!")
+        for value in tiles.get_tiles_by_type(assets.tile("""
+            myTile14
+        """)):
+            bottom = sprites.create(img("""
+                    . . c c c c c c c c c c c c . . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c 2 2 c c c c 2 2 c c c . 
+                                    . c c c 2 2 c c c c 2 2 c c c . 
+                                    . c c c 2 2 c c c c 2 2 c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c c c c c c c c c c c c c . 
+                                    . c c . . c c c . . c . . c c .
+                """),
+                SpriteKind.bikini_bottom)
+            tiles.place_on_tile(bottom, value)
+            tiles.set_tile_at(value, sprites.dungeon.floor_dark0)
     elif current_level == 1:
         tiles.set_tilemap(tilemap("""
             level2
         """))
-        for value in tiles.get_tiles_by_type(assets.tile("""
+        for value2 in tiles.get_tiles_by_type(assets.tile("""
             myTile14
         """)):
             blackghost = sprites.create(img("""
@@ -270,8 +228,8 @@ def start_level():
                                     . c c . . c c c . . c . . c c .
                 """),
                 SpriteKind.enemyblackghost)
-            tiles.place_on_tile(blackghost, value)
-            tiles.set_tile_at(value, assets.tile("""
+            tiles.place_on_tile(blackghost, value2)
+            tiles.set_tile_at(value2, assets.tile("""
                 transparency16
             """))
         blackghost.vx = -40
@@ -279,18 +237,16 @@ def start_level():
         tiles.set_tilemap(tilemap("""
             level4
         """))
-        for value2 in sprites.all_of_kind(SpriteKind.enemyblackghost):
-            value2.destroy()
+        for value22 in sprites.all_of_kind(SpriteKind.enemyblackghost):
+            value22.destroy()
     elif current_level == 3:
         tiles.set_tilemap(tilemap("""
             level5
         """))
-        for value22 in sprites.all_of_kind(SpriteKind.enemy):
-            value22.destroy()
+        for value23 in sprites.all_of_kind(SpriteKind.enemy):
+            value23.destroy()
         for value3 in sprites.all_of_kind(SpriteKind.enemyghost):
             value3.destroy()
-    else:
-        pass
     for value4 in tiles.get_tiles_by_type(assets.tile("""
         myTile7
     """)):
@@ -571,33 +527,14 @@ def start_level():
         myTile4
     """)):
         tiles.place_on_tile(Dog, value7)
-        tiles.set_tile_at(value7, assets.tile("""
-            transparency16
-        """))
+        tiles.set_tile_at(value7, sprites.dungeon.floor_dark0)
 
-def on_on_overlap5(sprite10, otherSprite5):
-    otherSprite5.destroy()
-    info.change_score_by(1)
-sprites.on_overlap(SpriteKind.dog, SpriteKind.food, on_on_overlap5)
-
-def on_overlap_tile4(sprite11, location6):
-    global current_level
-    current_level += -1
-    start_level()
-    for value11 in sprites.all_of_kind(SpriteKind.girl):
-        value11.destroy()
-scene.on_overlap_tile(SpriteKind.dog,
-    assets.tile("""
-        myTile11
-    """),
-    on_overlap_tile4)
-
-def on_overlap_tile5(sprite12, location7):
+def on_overlap_tile3(sprite9, location5):
     global ghost, bone
     tiles.set_tilemap(tilemap("""
         level6
     """))
-    for value122 in tiles.get_tiles_by_type(assets.tile("""
+    for value12 in tiles.get_tiles_by_type(assets.tile("""
         myTile6
     """)):
         ghost = sprites.create(img("""
@@ -676,8 +613,8 @@ def on_overlap_tile5(sprite12, location7):
                 """)],
             300,
             True)
-        tiles.place_on_tile(ghost, value122)
-        tiles.set_tile_at(value122, assets.tile("""
+        tiles.place_on_tile(ghost, value12)
+        tiles.set_tile_at(value12, assets.tile("""
             transparency16
         """))
     for value13 in tiles.get_tiles_by_type(assets.tile("""
@@ -717,16 +654,9 @@ scene.on_overlap_tile(SpriteKind.dog,
     assets.tile("""
         myTile12
     """),
-    on_overlap_tile5)
+    on_overlap_tile3)
 
-def on_on_overlap6(sprite13, otherSprite6):
-    girly.set_flag(SpriteFlag.GHOST, True)
-    game.splash("Find my brother. He will give you a key to unlock a gate so you can escape. Good luck.")
-    pause(2000)
-    girly.set_flag(SpriteFlag.GHOST, False)
-sprites.on_overlap(SpriteKind.dog, SpriteKind.girl, on_on_overlap6)
-
-def on_overlap_tile6(sprite14, location8):
+def on_overlap_tile4(sprite10, location6):
     global bone
     tiles.set_tilemap(tilemap("""
         level7
@@ -762,11 +692,11 @@ def on_overlap_tile6(sprite14, location8):
         value16.destroy()
     for value17 in sprites.all_of_kind(SpriteKind.enemyghost):
         value17.destroy()
-    for value182 in tiles.get_tiles_by_type(assets.tile("""
+    for value18 in tiles.get_tiles_by_type(assets.tile("""
         myTile4
     """)):
-        tiles.place_on_tile(Dog, value182)
-        tiles.set_tile_at(value182, assets.tile("""
+        tiles.place_on_tile(Dog, value18)
+        tiles.set_tile_at(value18, assets.tile("""
             transparency16
         """))
     info.start_countdown(10)
@@ -774,17 +704,21 @@ scene.on_overlap_tile(SpriteKind.dog,
     assets.tile("""
         myTile0
     """),
-    on_overlap_tile6)
+    on_overlap_tile4)
 
+kittyProjectile: Sprite = None
+dogProjectile: Sprite = None
+dogProjectileDelay = False
+kittyVar: Sprite = None
 bone: Sprite = None
 ghost: Sprite = None
+boi: Sprite = None
 girly: Sprite = None
 ghoasty: Sprite = None
+bottom: Sprite = None
 blackghost: Sprite = None
-projectile: Sprite = None
-value102: Sprite = None
-hasKey = False
-boi: Sprite = None
+has_top = False
+has_bottom = False
 current_level = 0
 Dog: Sprite = None
 Dog = sprites.create(img("""
@@ -806,6 +740,70 @@ Dog = sprites.create(img("""
     SpriteKind.dog)
 controller.move_sprite(Dog)
 scene.camera_follow_sprite(Dog)
-current_level = 3
+current_level = 0
 start_level()
-game.splash("Get the dog to the end without dying! Good luck!")
+
+def on_on_update():
+    global dogProjectile, dogProjectileDelay
+    if kittyVar:
+        if controller.A.is_pressed() and dogProjectileDelay == False:
+            dogProjectile = sprites.create_projectile_from_sprite(img("""
+                    . . . . . . . . . . . . . . . . 
+                                    . . . . . . . . . . . . . . . . 
+                                    . . . . . . . . . . . . . . . . 
+                                    . . . . . . . . . . . . . . . . 
+                                    . . . . . . . . . . . . . . . . 
+                                    . . . . . f f f . f f f . . . . 
+                                    . . . . f 3 3 3 f 3 3 3 f . . . 
+                                    . . . . f 3 3 3 3 3 1 3 f . . . 
+                                    . . . . f 3 3 3 3 3 3 3 f . . . 
+                                    . . . . . f 3 b b b 3 f . . . . 
+                                    . . . . . f f b b b f f . . . . 
+                                    . . . . . . f f b f f . . . . . 
+                                    . . . . . . . f f f . . . . . . 
+                                    . . . . . . . . . . . . . . . . 
+                                    . . . . . . . . . . . . . . . . 
+                                    . . . . . . . . . . . . . . . .
+                """),
+                Dog,
+                50,
+                0)
+            dogProjectile.set_kind(SpriteKind.dogProjectileKind)
+            dogProjectileDelay = True
+game.on_update(on_on_update)
+
+def on_update_interval():
+    global kittyProjectile
+    if kittyVar:
+        kittyProjectile = sprites.create_projectile_from_sprite(img("""
+                . . . . . . . . . . . . . . . . 
+                            . . . . . . . . . . . . . . . . 
+                            . . . . . . . . . . . . . . . . 
+                            . . . . . . . . . . . . . . . . 
+                            . . . . . . . . . . . . . . . . 
+                            . . . . . . . e e e . . . . . . 
+                            . . . . . . d b d d . . . . . . 
+                            . . . . . e b d f e d e . . . . 
+                            . . . . e b b b f f d e e . . . 
+                            . . . . b b f d b b d d e . . . 
+                            . . . . e b f f b d f e d . . . 
+                            . . . . . e d d e b b d . . . . 
+                            . . . . . . e e e e . . . . . . 
+                            . . . . . . . e . . . . . . . . 
+                            . . . . . . . . . . . . . . . . 
+                            . . . . . . . . . . . . . . . .
+            """),
+            kittyVar,
+            -50,
+            0)
+        kittyProjectile.set_kind(SpriteKind.kittyProjectileKind)
+game.on_update_interval(750, on_update_interval)
+
+def on_update_interval2():
+    Dog.set_flag(SpriteFlag.GHOST_THROUGH_TILES, False)
+game.on_update_interval(2000, on_update_interval2)
+
+def on_update_interval3():
+    global dogProjectileDelay
+    dogProjectileDelay = False
+game.on_update_interval(500, on_update_interval3)
